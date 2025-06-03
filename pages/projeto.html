@@ -14,7 +14,7 @@
         <nav>
             <ul>
                 <li><a href="../index.html">Home</a></li>
-                <li><a href="projeto.html">Projetos</a></li>
+                <li><a href="projeto.html">Projeto</a></li>
                 <li><a href="contato.html">Contato</a></li>
             </ul>
         </nav>
@@ -22,31 +22,31 @@
     
     <main>
         <section id="projeto-detalhes">
-            <h2>A Caixa Chata - Projeto Detalhado</h2>
+            <h2>A Caixa Chata</h2>
             
             <div class="projeto-info">
-                <h3>Tema e Objetivo</h3>
+                <h3>Objetivo</h3>
                 <p>O projeto "A Caixa Chata" tem como objetivo desenvolver um sistema automatizado utilizando Arduino que demonstra conceitos fundamentais de sistemas digitais e programação. O sistema foi projetado para resolver problemas práticos através de automação inteligente.</p>
             </div>
             
             <div class="projeto-info">
                 <h3>Componentes Utilizados</h3>
                 <ul class="lista-componentes">
-                    <li>Arduino Uno (microcontrolador principal)</li>
-                    <li>Sensores diversos (temperatura, movimento, luminosidade)</li>
-                    <li>LEDs e resistores</li>
-                    <li>Servo motor</li>
-                    <li>Módulo WiFi</li>
-                    <li>Display LCD</li>
-                    <li>Botões e switches</li>
-                    <li>Protoboard e jumpers</li>
+                    <li>Arduino Uno</li>
+                    <li>Caixa MDF</li>
+                    <li>Chave alavanca</li>
+                    <li>Motor DC 3-6v com caixa de metal</li>
+                    <li>Ponte H</li>
+                    <li>Protoboard</li>
+                    <li>Cola</li>
+                    <li>Jumpers</li>
                 </ul>
             </div>
             
             <div class="projeto-info">
                 <h3>Esquema do Circuito</h3>
                 <div class="circuito-placeholder">
-                    <p><em>Foto do circuito sera inserido aqui</em></p>
+                    <img src="../imagens/circuito.jpg" alt="Esquema do Circuito - A Caixa Chata" class="circuito-imagem">
                     <p>O circuito integra todos os componentes de forma organizada, seguindo boas práticas de eletrônica digital.</p>
                 </div>
             </div>
@@ -55,40 +55,68 @@
                 <h3>Código Arduino</h3>
                 <div class="codigo-preview">
                     <pre><code>
-// Código principal do projeto A Caixa Chata
-#include &lt;Servo.h&gt;
-#include &lt;LiquidCrystal.h&gt;
+const byte A_IA = 10;
+const byte A_IB = 11;
+const int pinoChave = 2;
 
-// Definição de pinos e variáveis
-const int sensorPin = A0;
-const int ledPin = 13;
-const int servoPin = 9;
-
-Servo meuServo;
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+bool clicado = false;
 
 void setup() {
-  // Inicialização do sistema
+  pinMode(A_IA, OUTPUT);
+  pinMode(A_IB, OUTPUT);
+  pinMode(pinoChave, INPUT_PULLUP);
   Serial.begin(9600);
-  pinMode(ledPin, OUTPUT);
-  meuServo.attach(servoPin);
-  lcd.begin(16, 2);
-  lcd.print("Sistema Ativo");
+}
+
+void parar(int tempo = 50) {
+  Serial.println("Parado");
+  digitalWrite(A_IA, LOW);
+  digitalWrite(A_IB, LOW);
+  delay(tempo);
+}
+
+void subir(int tempo = 50) {
+  Serial.println("Subindo");
+  digitalWrite(A_IA, LOW);
+  digitalWrite(A_IB, HIGH);
+  delay(tempo);
+}
+
+void subir_ate_clicar() {
+  bool tmp = true;
+  tmp = esta_apertado();
+  while (tmp == true) {
+    subir(20);
+    tmp = esta_apertado();
+  }
+  parar();
+}
+
+void descer(int tempo = 50) {
+  Serial.println("Descendo");
+  digitalWrite(A_IA, HIGH);
+  digitalWrite(A_IB, LOW);
+  delay(tempo);
+}
+
+bool esta_apertado() {
+  int estado = digitalRead(pinoChave);
+  delay(20);
+  if (estado == LOW) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void loop() {
-  // Loop principal do programa
-  int sensorValue = analogRead(sensorPin);
-  
-  if (sensorValue > 500) {
-    digitalWrite(ledPin, HIGH);
-    meuServo.write(90);
-  } else {
-    digitalWrite(ledPin, LOW);
-    meuServo.write(0);
+  clicado = esta_apertado();
+
+  if (clicado == true) {
+    subir_ate_clicar();
+    descer(250);
+    parar();
   }
-  
-  delay(100);
 }
                     </code></pre>
                 </div>
@@ -98,14 +126,11 @@ void loop() {
                 <h3>Demonstração</h3>
                 <div class="demo-section">
                     <p>O projeto em funcionamento demonstra:</p>
-                    <ul>
-                        <li>Resposta automática a estímulos dos sensores</li>
-                        <li>Interface visual através do display LCD</li>
-                        <li>Controle de atuadores (servo motor e LEDs)</li>
-                        <li>Integração harmoniosa entre hardware e software</li>
-                    </ul>
-                    <div class="demo-placeholder">
-                        <p><em>Imagens e vídeos da demonstração serão inseridos aqui</em></p>
+                    <div class="demo-video">
+                        <video controls class="video-demonstracao">
+                            <source src="../imagens/video2.mp4" type="video/mp4">
+                            Seu navegador não suporta a reprodução de vídeo.
+                        </video>
                     </div>
                 </div>
             </div>
@@ -113,16 +138,6 @@ void loop() {
             <div class="projeto-info">
                 <h3>Conclusão do Grupo</h3>
                 <p>O desenvolvimento do projeto "A Caixa Chata" proporcionou uma experiência valiosa na integração entre teoria e prática. Através deste trabalho, conseguimos aplicar conceitos de sistemas digitais e programação de forma concreta.</p>
-                
-                <h4>Principais Aprendizados:</h4>
-                <ul>
-                    <li>Programação em C/C++ para microcontroladores</li>
-                    <li>Integração de componentes eletrônicos</li>
-                    <li>Desenvolvimento de interfaces web</li>
-                    <li>Trabalho em equipe e gestão de projetos</li>
-                    <li>Resolução de problemas técnicos</li>
-                </ul>
-                
                 <p>Este projeto representa não apenas um resultado acadêmico, mas uma base sólida para futuros desenvolvimentos na área de sistemas embarcados e automação.</p>
             </div>
         </section>
